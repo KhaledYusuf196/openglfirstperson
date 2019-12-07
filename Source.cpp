@@ -12,7 +12,7 @@ using namespace std;
 
 
 const GLint WIDTH = 800, HEIGHT = 600;
-GLuint VAO, VBO, IBO, programId, modelMatLoc, viewMatLoc, projectionMatLoc, camera_positionLoc, TextureId;
+GLuint VAO, VBO, IBO, programId, modelMatLoc, viewMatLoc, projectionMatLoc, camera_positionLoc, TextureId, TextureId2;
 GLuint InitShader(const char* vertex_shader_file_name, const char* fragment_shader_file_name);
 
 
@@ -107,6 +107,21 @@ int init()
 	else {
 		glGenTextures(1, &TextureId);
 		glBindTexture(GL_TEXTURE_2D, TextureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().x, img.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.getPixelsPtr());
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+	}
+
+	if (!img.loadFromFile("C:\\Users\\khale\\OneDrive\\Pictures\\gabe.jpg")) {
+		cout << "Error loading image" << endl;
+	}
+	else {
+		glGenTextures(1, &TextureId2);
+		glBindTexture(GL_TEXTURE_2D, TextureId2);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.getSize().x, img.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.getPixelsPtr());
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -231,6 +246,43 @@ int main() {
 			2,1,6,
 			2,6,5
 		}, TextureId);
+
+
+	Mesh cube2({
+		{glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(1, 0, 0), glm::vec2(1,0)},
+		{glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0, 1, 0), glm::vec2(1,1)},
+		{glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0, 0, 1), glm::vec2(0,1)},
+		{glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1, 1, 0), glm::vec2(0,0)},
+		{glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0, 1, 1)},
+		{glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(1, 0, 1)},
+		{glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(1, 1, 1)},
+		{glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0, 0, 0)}
+		},
+		{
+			//FRONT
+			0,1,2,
+			0,2,3,
+
+			//RIGHT
+			3,2,5,
+			3,5,4,
+
+			//BACK
+			4,5,6,
+			4,6,7,
+
+			//LEFT
+			7,6,1,
+			7,1,0,
+
+			//TOP
+			7,0,3,
+			7,3,4,
+
+			//BOTTOM
+			2,1,6,
+			2,6,5
+		}, TextureId2);
 	
 	
 	while (window.isOpen())
@@ -323,6 +375,12 @@ int main() {
 		cube.theta = 3.14159f;
 		cube.scale = glm::vec3(1, 1, 1);
 		cube.Render(modelMatLoc);
+
+		cube2.position = glm::vec3(2, 0, 5);
+		cube2.rotationAxis = glm::vec3(0, 1, 0);
+		cube2.theta = 3.14159f * 1.5f;
+		cube2.scale = glm::vec3(1, 1, 1);
+		cube2.Render(modelMatLoc);
 
 
 		window.display();
